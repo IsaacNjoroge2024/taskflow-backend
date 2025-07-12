@@ -22,6 +22,7 @@ public class TaskFilterDto {
     private String sortDirection;
     private Integer page;
     private Integer size;
+    private String currentFilter;
 
     // Default values
     public String getSortBy() {
@@ -38,5 +39,9 @@ public class TaskFilterDto {
 
     public Integer getSize() {
         return size != null ? size : 20;
+    }
+
+    public String getCurrentFilter() {
+        return currentFilter != null ? currentFilter : "all";
     }
 }

@@ -93,7 +93,10 @@ public class TaskServiceImpl implements TaskService {
         Pageable pageable = createPageable(filterDto);
         Page<Task> taskPage;
 
-        if (hasFilters(filterDto)) {
+        if ("high".equals(filterDto.getCurrentFilter()) && filterDto.getPriority() == TaskPriority.HIGH) {
+            taskPage = taskRepository.findByPriorityAndStatus(
+                    TaskPriority.HIGH, TaskStatus.PENDING, pageable);
+        } else if (hasFilters(filterDto)) {
             taskPage = taskRepository.findTasksWithFilters(
                     filterDto.getSearch(),
                     filterDto.getStatus(),

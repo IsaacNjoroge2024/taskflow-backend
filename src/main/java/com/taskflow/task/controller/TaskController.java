@@ -66,13 +66,14 @@ public class TaskController {
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "desc") String sortDirection,
             @RequestParam(defaultValue = "0") Integer page,
-            @RequestParam(defaultValue = "20") Integer size) {
+            @RequestParam(defaultValue = "20") Integer size,
+            @RequestParam(defaultValue = "all") String filter) {
 
-        log.info("REST request to get tasks with filters - search: {}, status: {}, priority: {}",
-                search, status, priority);
+        log.info("REST request to get tasks with filters - search: {}, status: {}, priority: {}, filter: {}",
+                search, status, priority, filter);
 
         TaskFilterDto filterDto = new TaskFilterDto(search, status, priority, dueDateFrom,
-                dueDateTo, overdue, sortBy, sortDirection, page, size);
+                dueDateTo, overdue, sortBy, sortDirection, page, size, filter);
 
         Page<TaskResponseDto> tasks = taskService.getTasks(filterDto);
 

@@ -164,6 +164,7 @@ class TaskServiceTest {
         TaskFilterDto filterDto = new TaskFilterDto();
         filterDto.setSearch("test");
         filterDto.setStatus(TaskStatus.PENDING);
+        filterDto.setCurrentFilter("pending");
 
         // When
         Page<TaskResponseDto> result = taskService.getTasks(filterDto);
@@ -175,6 +176,47 @@ class TaskServiceTest {
 
         verify(taskRepository).findTasksWithFilters(
                 eq("test"), eq(TaskStatus.PENDING), any(), any(), any(), any(Pageable.class));
+    }
+
+    @Test
+    void shouldGetHighPriorityPendingTasksOnly() {
+        // Given
+        when(taskRepository.findByPriorityAndStatus(any(TaskPriority.class), any(TaskStatus.class), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(Arrays.asList(testTask)));
+
+        TaskFilterDto filterDto = new TaskFilterDto();
+        filterDto.setPriority(TaskPriority.HIGH);
+        filterDto.setCurrentFilter("high");
+
+        // When
+        Page<TaskResponseDto> result = taskService.getTasks(filterDto);
+
+        // Then
+        assertThat(result.getContent()).hasSize(1);
+        verify(taskRepository).findByPriorityAndStatus(any(), any(), any());
+    }
+
+    @Test
+    void shouldGetAllTasksWhenNoFilters() {
+        // Given
+        List<Task> tasks = Arrays.asList(testTask);
+        Page<Task> taskPage = new PageImpl<>(tasks, PageRequest.of(0, 20), 1);
+
+        when(taskRepository.findAll(any(Pageable.class))).thenReturn(taskPage);
+
+        TaskFilterDto filterDto = new TaskFilterDto();
+        filterDto.setCurrentFilter("all");
+
+        // When
+        Page<TaskResponseDto> result = taskService.getTasks(filterDto);
+
+        // Then
+        assertThat(result).isNotNull();
+        assertThat(result.getContent()).hasSize(1);
+
+        verify(taskRepository).findAll(any(Pageable.class));
+        verify(taskRepository, never()).findByPriorityAndStatus(any(), any(), any(Pageable.class));
+        verify(taskRepository, never()).findTasksWithFilters(any(), any(), any(), any(), any(), any(Pageable.class));
     }
 
     @Test

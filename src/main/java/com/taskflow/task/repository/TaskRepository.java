@@ -53,4 +53,9 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
                                     @Param("dueDateFrom") LocalDate dueDateFrom,
                                     @Param("dueDateTo") LocalDate dueDateTo,
                                     Pageable pageable);
+
+    @Query("SELECT t FROM Task t WHERE t.priority = :priority AND t.status = :status")
+    Page<Task> findByPriorityAndStatus(@Param("priority") TaskPriority priority,
+                                       @Param("status") TaskStatus status,
+                                       Pageable pageable);
 }
