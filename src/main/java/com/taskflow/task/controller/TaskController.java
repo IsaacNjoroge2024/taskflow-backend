@@ -22,14 +22,10 @@ import java.util.List;
 @RequestMapping("/tasks")
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = {"http://localhost:*", "http://127.0.0.1:*"})
 public class TaskController {
 
     private final TaskService taskService;
 
-    /**
-     * Create a new task
-     */
     @PostMapping
     public ResponseEntity<TaskResponseDto> createTask(@Valid @RequestBody TaskRequestDto taskRequestDto) {
         log.info("REST request to create task: {}", taskRequestDto.getTitle());
@@ -37,9 +33,6 @@ public class TaskController {
         return new ResponseEntity<>(createdTask, HttpStatus.CREATED);
     }
 
-    /**
-     * Get a task by ID
-     */
     @GetMapping("/{id}")
     public ResponseEntity<TaskResponseDto> getTask(@PathVariable Long id) {
         log.info("REST request to get task: {}", id);
@@ -47,9 +40,6 @@ public class TaskController {
         return ResponseEntity.ok(task);
     }
 
-    /**
-     * Update a task
-     */
     @PutMapping("/{id}")
     public ResponseEntity<TaskResponseDto> updateTask(@PathVariable Long id,
                                                       @Valid @RequestBody TaskRequestDto taskRequestDto) {
@@ -58,9 +48,6 @@ public class TaskController {
         return ResponseEntity.ok(updatedTask);
     }
 
-    /**
-     * Delete a task
-     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
         log.info("REST request to delete task: {}", id);
@@ -68,9 +55,6 @@ public class TaskController {
         return ResponseEntity.noContent().build();
     }
 
-    /**
-     * Get all tasks with filtering and pagination
-     */
     @GetMapping
     public ResponseEntity<Page<TaskResponseDto>> getTasks(
             @RequestParam(required = false) String search,
@@ -99,9 +83,6 @@ public class TaskController {
                 .body(tasks);
     }
 
-    /**
-     * Toggle task completion status
-     */
     @PatchMapping("/{id}/toggle-completion")
     public ResponseEntity<TaskResponseDto> toggleTaskCompletion(@PathVariable Long id) {
         log.info("REST request to toggle completion status for task: {}", id);
@@ -109,9 +90,6 @@ public class TaskController {
         return ResponseEntity.ok(task);
     }
 
-    /**
-     * Get overdue tasks
-     */
     @GetMapping("/overdue")
     public ResponseEntity<List<TaskResponseDto>> getOverdueTasks() {
         log.info("REST request to get overdue tasks");
@@ -119,9 +97,6 @@ public class TaskController {
         return ResponseEntity.ok(overdueTasks);
     }
 
-    /**
-     * Get task statistics
-     */
     @GetMapping("/statistics")
     public ResponseEntity<TaskService.TaskStatisticsDto> getTaskStatistics() {
         log.info("REST request to get task statistics");
@@ -129,9 +104,6 @@ public class TaskController {
         return ResponseEntity.ok(statistics);
     }
 
-    /**
-     * Health check endpoint
-     */
     @GetMapping("/health")
     public ResponseEntity<String> health() {
         return ResponseEntity.ok("TaskFlow API is running!");
