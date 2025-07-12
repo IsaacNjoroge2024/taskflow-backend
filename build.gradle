@@ -5,6 +5,7 @@ plugins {
     id 'org.springframework.boot' version '3.4.4'
     id 'io.spring.dependency-management' version '1.1.7'
     id 'org.liquibase.gradle' version '2.2.0'
+    id 'co.uzzu.dotenv.gradle' version '2.0.0'
 }
 
 group = 'com.taskflow'
@@ -69,7 +70,11 @@ dependencies {
 liquibase {
     activities {
         main {
-            defaultsFile 'src/main/resources/liquibase.properties'
+            changeLogFile 'src/main/resources/db/changelog/db.changelog-master.xml'
+            url 'jdbc:mysql://localhost:3306/taskflow'
+            username 'taskflow_user'
+            password 'Pashibei@254'
+            driver 'com.mysql.cj.jdbc.Driver'
         }
     }
 }

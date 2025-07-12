@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.29.xsd">
+
+    <!-- Create tasks table -->
+    <changeSet id="001-create-tasks-table" author="TaskFlow Developer">
+        <comment>Create the main tasks table</comment>
+
+        <createTable tableName="tasks">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT"/>
+            <column name="status" type="VARCHAR(20)" defaultValue="PENDING">
+                <constraints nullable="false"/>
+            </column>
+            <column name="priority" type="VARCHAR(10)" defaultValue="MEDIUM">
+                <constraints nullable="false"/>
+            </column>
+            <column name="due_date" type="DATE"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <!-- Add indexes for performance -->
+    <changeSet id="002-add-task-indexes" author="TaskFlow Developer">
+        <comment>Add indexes for better query performance</comment>
+
+        <createIndex indexName="idx_task_status" tableName="tasks">
+            <column name="status"/>
+        </createIndex>
+
+        <createIndex indexName="idx_task_priority" tableName="tasks">
+            <column name="priority"/>
+        </createIndex>
+
+        <createIndex indexName="idx_task_due_date" tableName="tasks">
+            <column name="due_date"/>
+        </createIndex>
+
+        <createIndex indexName="idx_task_created_at" tableName="tasks">
+            <column name="created_at"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- Insert sample data for development -->
+    <changeSet id="003-insert-sample-data" author="TaskFlow Developer" context="dev">
+        <comment>Insert sample tasks for development and testing</comment>
+
+        <insert tableName="tasks">
+            <column name="title" value="Complete project documentation"/>
+            <column name="description" value="Write comprehensive documentation for the new task management system"/>
+            <column name="status" value="PENDING"/>
+            <column name="priority" value="HIGH"/>
+            <column name="due_date" value="2025-07-20"/>
+        </insert>
+
+        <insert tableName="tasks">
+            <column name="title" value="Review code changes"/>
+            <column name="description" value="Review the latest pull requests from the team"/>
+            <column name="status" value="COMPLETED"/>
+            <column name="priority" value="MEDIUM"/>
+            <column name="due_date" value="2025-07-15"/>
+        </insert>
+
+        <insert tableName="tasks">
+            <column name="title" value="Plan team meeting"/>
+            <column name="description" value="Organize agenda for next week's team meeting"/>
+            <column name="status" value="PENDING"/>
+            <column name="priority" value="LOW"/>
+        </insert>
+
+        <insert tableName="tasks">
+            <column name="title" value="Update dependencies"/>
+            <column name="description" value="Update all project dependencies to latest stable versions"/>
+            <column name="status" value="PENDING"/>
+            <column name="priority" value="MEDIUM"/>
+            <column name="due_date" value="2025-07-25"/>
+        </insert>
+
+        <insert tableName="tasks">
+            <column name="title" value="Setup CI/CD pipeline"/>
+            <column name="description" value="Configure automated testing and deployment pipeline"/>
+            <column name="status" value="PENDING"/>
+            <column name="priority" value="HIGH"/>
+            <column name="due_date" value="2025-07-30"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>
