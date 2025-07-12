@@ -1,0 +1,88 @@
+import org.springframework.boot.gradle.tasks.run.BootRun
+
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.4.4'
+    id 'io.spring.dependency-management' version '1.1.7'
+    id 'org.liquibase.gradle' version '2.2.0'
+}
+
+group = 'com.taskflow'
+version = '1.0.0'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+    liquibaseRuntime.extendsFrom runtimeClasspath
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Spring Boot Starters
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+    // Database Drivers
+    runtimeOnly 'com.h2database:h2'
+    runtimeOnly 'mysql:mysql-connector-java:8.0.33'
+    runtimeOnly 'org.postgresql:postgresql'
+
+    // Liquibase for database migrations
+    implementation 'org.liquibase:liquibase-core'
+    liquibaseRuntime 'org.liquibase:liquibase-core:4.31.1'
+    liquibaseRuntime 'info.picocli:picocli:4.7.5'
+    liquibaseRuntime 'com.h2database:h2'
+    liquibaseRuntime 'mysql:mysql-connector-java:8.0.33'
+
+    // Lombok for reducing boilerplate
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // Development Tools
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+    // Test Dependencies
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'com.h2database:h2'  // H2 for testing
+
+    // TestContainers
+    testImplementation 'org.testcontainers:junit-jupiter:1.19.3'
+    testImplementation 'org.testcontainers:mysql:1.19.3'
+
+    // For JSON processing
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+}
+
+// Liquibase Configuration
+liquibase {
+    activities {
+        main {
+            defaultsFile 'src/main/resources/liquibase.properties'
+        }
+    }
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+// Custom task to run the application
+tasks.register('bootRunDev', BootRun) {
+    group = 'application'
+    description = 'Run the application with dev profile'
+    classpath = sourceSets.main.runtimeClasspath
+    conventionMapping.main = { 'com.taskflow.TaskFlowApplication' }
+    systemProperty 'spring.profiles.active', 'dev'
+}
