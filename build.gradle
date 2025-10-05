@@ -36,8 +36,8 @@ dependencies {
 
     // Database Drivers
     runtimeOnly 'com.h2database:h2'
-    implementation 'mysql:mysql-connector-java:8.0.33'
-    implementation 'org.postgresql:postgresql'
+    runtimeOnly 'mysql:mysql-connector-java:8.0.33'
+    runtimeOnly 'org.postgresql:postgresql'
 
     // Liquibase for database migrations
     implementation 'org.liquibase:liquibase-core'
