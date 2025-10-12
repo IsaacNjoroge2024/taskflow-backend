@@ -16,6 +16,16 @@ java {
     }
 }
 
+springBoot {
+    mainClass = 'com.taskflow.TaskFlowApplication'
+}
+
+// Ensure bootJar creates the correct executable JAR
+tasks.named('bootJar') {
+    archiveFileName = 'taskflow-backend.jar'
+    launchScript()
+}
+
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
