@@ -8,7 +8,7 @@ plugins {
 }
 
 group = 'com.taskflow'
-version = '1.0.0'
+version = '1.1.0'
 
 java {
     toolchain {
@@ -34,19 +34,16 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
-    // Database Drivers
-    runtimeOnly 'com.h2database:h2'
-    runtimeOnly 'mysql:mysql-connector-java:8.0.33'
+    // Database
     runtimeOnly 'org.postgresql:postgresql'
 
-    // Liquibase for database migrations
+    // Liquibase
     implementation 'org.liquibase:liquibase-core'
     liquibaseRuntime 'org.liquibase:liquibase-core:4.31.1'
     liquibaseRuntime 'info.picocli:picocli:4.7.5'
-    liquibaseRuntime 'com.h2database:h2'
-    liquibaseRuntime 'mysql:mysql-connector-java:8.0.33'
+    liquibaseRuntime 'org.postgresql:postgresql'
 
-    // Lombok for reducing boilerplate
+    // Lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
@@ -55,25 +52,25 @@ dependencies {
 
     // Test Dependencies
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'com.h2database:h2'  // H2 for testing
+    testImplementation 'com.h2database:h2'
 
     // TestContainers
     testImplementation 'org.testcontainers:junit-jupiter:1.19.3'
-    testImplementation 'org.testcontainers:mysql:1.19.3'
+    testImplementation 'org.testcontainers:postgresql:1.19.3'
 
     // For JSON processing
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 }
 
-// Liquibase Configuration
+// Liquibase Configuration for local development
 liquibase {
     activities {
         main {
             changeLogFile 'src/main/resources/db/changelog/db.changelog-master.xml'
-            url 'jdbc:mysql://localhost:3306/taskflow'
+            url 'jdbc:postgresql://localhost:5432/taskflow'
             username 'taskflow_user'
             password 'Pashibei@254'
-            driver 'com.mysql.cj.jdbc.Driver'
+            driver 'org.postgresql.Driver'
         }
     }
 }

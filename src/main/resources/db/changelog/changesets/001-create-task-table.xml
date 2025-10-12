@@ -5,8 +5,18 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.29.xsd">
 
+    <!-- Grant permissions for PostgreSQL (Railway fix) -->
+    <changeSet id="000-grant-permissions" author="isaac" runAlways="false">
+        <preConditions onFail="CONTINUE">
+            <dbms type="postgresql"/>
+        </preConditions>
+        <sql>
+            GRANT ALL ON SCHEMA public TO PUBLIC;
+        </sql>
+    </changeSet>
+
     <!-- Create tasks table -->
-    <changeSet id="001-create-tasks-table" author="TaskFlow Developer">
+    <changeSet id="001-create-tasks-table" author="isaac">
         <comment>Create the main tasks table</comment>
 
         <createTable tableName="tasks">
@@ -34,7 +44,7 @@
     </changeSet>
 
     <!-- Add indexes for performance -->
-    <changeSet id="002-add-task-indexes" author="TaskFlow Developer">
+    <changeSet id="002-add-task-indexes" author="isaac">
         <comment>Add indexes for better query performance</comment>
 
         <createIndex indexName="idx_task_status" tableName="tasks">
@@ -55,7 +65,7 @@
     </changeSet>
 
     <!-- Insert sample data for development -->
-    <changeSet id="003-insert-sample-data" author="TaskFlow Developer" context="dev">
+    <changeSet id="003-insert-sample-data" author="isaac" context="dev">
         <comment>Insert sample tasks for development and testing</comment>
 
         <insert tableName="tasks">
