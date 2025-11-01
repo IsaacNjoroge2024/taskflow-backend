@@ -17,6 +17,7 @@ public class CorsConfig implements WebMvcConfigurer {
             registry.addMapping("/**")
                     .allowedOrigins(
                             "https://taskflow-frontend-mu.vercel.app",
+                            "https://taskflow-frontend-mu.vercel.app/",
                             "https://*.vercel.app"
                     )
                     .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
