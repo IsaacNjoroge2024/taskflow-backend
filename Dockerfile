@@ -6,4 +6,4 @@ COPY build/libs/*.jar app.jar
 
 EXPOSE 8080
 
-CMD ["java", "-Dserver.port=${PORT}", "-Dspring.profiles.active=prod", "-jar", "app.jar"]
+CMD ["java", "-jar", "-Dspring.profiles.active=prod", "app.jar"]
