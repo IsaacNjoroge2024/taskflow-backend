@@ -11,8 +11,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import com.zaxxer.hikari.HikariDataSource;
 
 import jakarta.annotation.PreDestroy;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Optional;
 
 @Configuration
@@ -34,16 +32,25 @@ public class DatabaseConfig {
 
     @Bean
     @Profile("prod")
-    public HikariDataSource dataSource() throws URISyntaxException {
+    public HikariDataSource dataSource() {
         if (databaseUrl == null) {
             return null; // Will fallback to auto-configuration for dev environment
         }
 
-        URI dbUri = new URI(databaseUrl);
+        // Parse the URL manually instead of using URI
+        // Format: postgresql://username:password@host/database
 
-        String username = dbUri.getUserInfo().split(":")[0];
-        String password = dbUri.getUserInfo().split(":")[1];
-        String jdbcUrl = "jdbc:postgresql://" + dbUri.getHost() + ":" + dbUri.getPort() + dbUri.getPath();
+        String cleanUrl = databaseUrl.substring("postgresql://".length());
+        String userInfo = cleanUrl.substring(0, cleanUrl.indexOf('@'));
+        String username = userInfo.substring(0, userInfo.indexOf(':'));
+        String password = userInfo.substring(userInfo.indexOf(':') + 1);
+
+        String hostDb = cleanUrl.substring(cleanUrl.indexOf('@') + 1);
+        String host = hostDb.contains("/") ? hostDb.substring(0, hostDb.indexOf('/')) : hostDb;
+        String database = hostDb.contains("/") ? hostDb.substring(hostDb.indexOf('/') + 1) : "";
+
+        // Construct a valid JDBC URL with default PostgreSQL port 5432
+        String jdbcUrl = "jdbc:postgresql://" + host + ":5432/" + database;
 
         dataSource = new HikariDataSource();
         dataSource.setJdbcUrl(jdbcUrl);
