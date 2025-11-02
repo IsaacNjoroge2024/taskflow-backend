@@ -89,23 +89,30 @@ public class TaskServiceImpl implements TaskService {
         Pageable pageable = createPageable(filterDto);
         Page<Task> taskPage;
 
-        if ("high".equals(filterDto.getCurrentFilter()) && filterDto.getPriority() == TaskPriority.HIGH) {
-            taskPage = taskRepository.findByPriorityAndStatus(
-                    TaskPriority.HIGH, TaskStatus.PENDING, pageable);
-        } else if (hasFilters(filterDto)) {
-            taskPage = taskRepository.findTasksWithFilters(
-                    filterDto.getSearch(),
-                    filterDto.getStatus(),
-                    filterDto.getPriority(),
-                    filterDto.getDueDateFrom(),
-                    filterDto.getDueDateTo(),
-                    pageable
-            );
-        } else {
-            taskPage = taskRepository.findAll(pageable);
-        }
+        try {
+            String searchQuery = filterDto.getSearch() != null ? filterDto.getSearch().trim() : null;
 
-        return taskPage.map(this::mapEntityToDto);
+            if ("high".equals(filterDto.getCurrentFilter()) && TaskPriority.HIGH.equals(filterDto.getPriority())) {
+                taskPage = taskRepository.findByPriorityAndStatus(
+                        TaskPriority.HIGH, TaskStatus.PENDING, pageable);
+            } else if (hasFilters(filterDto)) {
+                taskPage = taskRepository.findTasksWithFilters(
+                        searchQuery,
+                        filterDto.getStatus(),
+                        filterDto.getPriority(),
+                        filterDto.getDueDateFrom(),
+                        filterDto.getDueDateTo(),
+                        pageable
+                );
+            } else {
+                taskPage = taskRepository.findAll(pageable);
+            }
+
+            return taskPage.map(this::mapEntityToDto);
+        } catch (Exception e) {
+            log.error("Error fetching tasks: ", e);
+            return Page.empty(pageable);
+        }
     }
 
     @Override
