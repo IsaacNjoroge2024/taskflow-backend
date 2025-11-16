@@ -7,6 +7,29 @@ plugins {
     id 'org.liquibase.gradle' version '2.2.0'
 }
 
+// Load .env file for Gradle tasks (like Liquibase)
+def loadEnvFile() {
+    def envFile = file('.env')
+    if (envFile.exists()) {
+        envFile.readLines().each { line ->
+            def trimmed = line.trim()
+            if (trimmed && !trimmed.startsWith('#')) {
+                def parts = trimmed.split('=', 2)
+                if (parts.length == 2) {
+                    def key = parts[0].trim()
+                    def value = parts[1].trim()
+                    if (!System.getenv(key)) {
+                        System.setProperty(key, value)
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Load environment variables from .env file
+loadEnvFile()
+
 group = 'com.taskflow'
 version = '1.0.0'
 
@@ -49,6 +72,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     //implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
+    // Load .env files
+    implementation 'me.paulschwarz:spring-dotenv:4.0.0'
+
     // Database
     runtimeOnly 'org.postgresql:postgresql'
 
@@ -84,7 +110,7 @@ liquibase {
             changeLogFile 'src/main/resources/db/changelog/db.changelog-master.xml'
             url 'jdbc:postgresql://localhost:5432/taskflow'
             username 'taskflow_user'
-            password 'Pashibei@254'
+            password System.getProperty('PASSWORD') ?: System.getenv('PASSWORD')
             driver 'org.postgresql.Driver'
         }
     }
